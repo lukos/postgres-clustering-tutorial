@@ -1,0 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "debian/bullseye64"
+  config.vm.box_download_insecure = true
+
+  config.vm.network "private_network", ip: "192.168.56.210"
+  config.vm.network "public_network"
+  config.vm.hostname = "barman1"
+
+  config.vm.provider "virtualbox" do |vb|
+      vb.name = "barman1"
+      vb.memory = 2048
+	  vb.cpus = 2
+  end
+  
+  config.vm.provision "shell", inline: <<-SHELL
+     apt-get update
+     apt-get install -y postgresql-client barman cron rsyslog
+	 mkdir -m 750 /var/lib/barman
+	 chown barman:barman /var/lib/barman
+  SHELL
+end
